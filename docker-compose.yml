@@ -1,0 +1,21 @@
+services:
+  gpt-cleaner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gpt-cleaner
+    ports:
+      - "8000:8000"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+      LOGGING_ENABLED: ${LOGGING_ENABLED:-true}
+      AVAILABLE_MODELS: ${AVAILABLE_MODELS:-gpt-4o-mini,gpt-5.2,gpt-5.3}
+      DEFAULT_MODEL: ${DEFAULT_MODEL:-gpt-4o-mini}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-20}
+      TOKEN_TTL_DAYS: ${TOKEN_TTL_DAYS:-7}
+      NEVER_RECONCILE_CATEGORIES: ${NEVER_RECONCILE_CATEGORIES:-PII,SECRET,FINANCIAL}
+      TOKEN_SECRET: ${TOKEN_SECRET:-local-dev-secret}
+    volumes:
+      - ./rules:/app/rules
+      - ./data:/app/data

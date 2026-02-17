@@ -1,0 +1,41 @@
+version: 1
+mode: enforce
+never_reconcile_categories:
+  - SECRET
+  - FINANCIAL
+rules:
+  - id: email_regex
+    type: regex
+    pattern: "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b"
+    category: PII
+    action: tokenize
+    priority: 120
+  - id: phone_regex
+    type: regex
+    pattern: "\\b(?:\\+?\\d{1,3}[\\s.-]?)?(?:\\(?\\d{2,4}\\)?[\\s.-]?)?\\d{3,4}[\\s.-]?\\d{3,4}\\b"
+    category: PII
+    action: tokenize
+    priority: 110
+  - id: api_key_regex
+    type: regex
+    pattern: "\\b(?:sk-[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_\\-]{20,})\\b"
+    category: SECRET
+    action: tokenize
+    priority: 130
+lists:
+  - id: clients
+    source: lists/clients.txt
+    category: BUSINESS
+    action: tokenize
+    priority: 95
+  - id: brands
+    source: lists/brands.txt
+    category: BRAND
+    action: tokenize
+    priority: 90
+  - id: employees
+    source: lists/employees.txt
+    category: NAMES
+    action: tokenize
+    priority: 100
+    include_reversed_word_order: true

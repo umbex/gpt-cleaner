@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GPT Cleaner Gateway</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">GPT Cleaner</div>
+        <button id="newSessionBtn" class="btn btn-primary">New Chat</button>
+        <div id="sessionList" class="session-list"></div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div class="controls-row">
+            <label class="control">
+              <span>Model</span>
+              <select id="modelSelect"></select>
+            </label>
+            <button id="rulesToggleBtn" class="btn">Rules</button>
+            <button id="themeToggleBtn" class="btn theme-btn" aria-label="Toggle theme" title="Toggle theme">
+              <span class="theme-btn-icon" aria-hidden="true"></span>
+              <span class="theme-btn-label">Light/Dark</span>
+            </button>
+          </div>
+          <div class="controls-row small">
+            <label class="switch-row">
+              <input id="loggingToggle" type="checkbox" />
+              <span>Persistent logging</span>
+            </label>
+            <span id="statusBadge" class="status-badge">...</span>
+          </div>
+        </header>
+
+        <section id="chatView" class="chat-view"></section>
+
+        <footer class="composer">
+          <textarea id="messageInput" placeholder="Type a message..."></textarea>
+          <div class="composer-actions">
+            <label class="file-upload">
+              <input id="fileInput" type="file" />
+              <span class="file-upload-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49L13.3 2.22a4 4 0 0 1 5.66 5.66L9.4 17.44a2 2 0 0 1-2.83-2.83l8.48-8.49"></path>
+                </svg>
+              </span>
+              <span>Attach file</span>
+            </label>
+            <label class="control response-mode-control">
+              <span>Response</span>
+              <select id="responseModeSelect">
+                <option value="chat">In chat</option>
+                <option value="same_as_input">Same as input</option>
+                <option value="txt">Force .txt</option>
+                <option value="md">Force .md</option>
+                <option value="docx">Force .docx</option>
+                <option value="xlsx">Force .xlsx</option>
+                <option value="csv">Force .csv</option>
+              </select>
+            </label>
+            <button id="sendBtn" class="btn btn-primary">Send</button>
+          </div>
+          <div id="attachmentInfo" class="attachment-info"></div>
+        </footer>
+      </main>
+
+      <aside id="rulesPanel" class="rules-panel hidden">
+        <div class="rules-header">
+          <h2>Rules Files</h2>
+          <button id="rulesCloseBtn" class="btn">Close</button>
+        </div>
+
+        <div class="rules-actions">
+          <label class="file-upload">
+            <input id="rulesFileInput" type="file" />
+            <span>Upload list</span>
+          </label>
+          <label class="switch-row">
+            <input id="overwriteToggle" type="checkbox" />
+            <span>Overwrite</span>
+          </label>
+          <button id="reloadRulesBtn" class="btn">Reload Rules</button>
+        </div>
+
+        <div id="rulesValidationInfo" class="rules-validation"></div>
+        <ul id="rulesFileList" class="rules-file-list"></ul>
+      </aside>
+    </div>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

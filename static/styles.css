@@ -1,0 +1,392 @@
+:root {
+  --bg: #f3f5f8;
+  --bg-2: #ffffff;
+  --text: #0f1720;
+  --muted: #5a6472;
+  --line: #d9dee5;
+  --accent: #0f6bff;
+  --accent-2: #1656bd;
+  --ok: #0a8f46;
+  --warn: #b46800;
+  --danger: #c93030;
+  --shadow: 0 12px 30px rgba(20, 32, 48, 0.1);
+}
+
+body.theme-dark {
+  --bg: #11151b;
+  --bg-2: #1a2029;
+  --text: #f4f7fb;
+  --muted: #a8b3c1;
+  --line: #2e3744;
+  --accent: #6da8ff;
+  --accent-2: #4f8df0;
+  --ok: #31c56d;
+  --warn: #f2a43e;
+  --danger: #ff6d6d;
+  --shadow: 0 18px 36px rgba(0, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: radial-gradient(circle at top left, #d6e4ff 0%, var(--bg) 35%, var(--bg) 100%);
+  color: var(--text);
+  font-family: "Segoe UI", "SF Pro Display", "Helvetica Neue", sans-serif;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 270px 1fr 340px;
+  min-height: 100vh;
+}
+
+.sidebar,
+.main-panel,
+.rules-panel {
+  background: var(--bg-2);
+  border-right: 1px solid var(--line);
+}
+
+.sidebar {
+  padding: 20px;
+}
+
+.brand {
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: 0.3px;
+  margin-bottom: 16px;
+}
+
+.session-list {
+  margin-top: 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.session-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.session-item {
+  flex: 1;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.session-item.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.session-close-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  font-size: 16px;
+}
+
+.session-close-btn:hover {
+  border-color: color-mix(in srgb, var(--danger) 55%, var(--line));
+  color: var(--danger);
+}
+
+.main-panel {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.topbar {
+  border-bottom: 1px solid var(--line);
+  padding: 14px 20px;
+  display: grid;
+  gap: 10px;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.controls-row.small {
+  justify-content: space-between;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+select,
+textarea,
+input[type="text"] {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.chat-view {
+  overflow: auto;
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+}
+
+.msg {
+  max-width: min(820px, 92%);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow);
+  white-space: pre-wrap;
+  line-height: 1.45;
+}
+
+.msg.user {
+  margin-left: auto;
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-2));
+}
+
+.msg.assistant {
+  margin-right: auto;
+}
+
+.generated-file-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.generated-file-link:hover {
+  text-decoration: underline;
+}
+
+.msg-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.composer {
+  border-top: 1px solid var(--line);
+  padding: 14px 20px;
+  display: grid;
+  gap: 10px;
+}
+
+textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+
+.composer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.file-upload-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+}
+
+.file-upload-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+}
+
+.file-upload input {
+  display: none;
+}
+
+.response-mode-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.response-mode-control select {
+  min-width: 150px;
+}
+
+.attachment-info,
+.rules-validation {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.btn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  border-radius: 10px;
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+}
+
+.btn-primary {
+  border-color: var(--accent);
+  background: linear-gradient(150deg, var(--accent), var(--accent-2));
+  color: white;
+}
+
+.theme-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-btn-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-btn-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+}
+
+.status-badge {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.switch-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rules-panel {
+  padding: 18px;
+  overflow: auto;
+}
+
+.rules-panel.hidden {
+  display: none;
+}
+
+.rules-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.rules-actions {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.rules-file-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.rules-file-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rules-file-main {
+  min-width: 0;
+}
+
+.rules-file-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rules-file-size {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.delete-btn {
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--line));
+  color: var(--danger);
+}
+
+@media (max-width: 1180px) {
+  .app-shell {
+    grid-template-columns: 240px 1fr;
+  }
+
+  .rules-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: min(92vw, 360px);
+    z-index: 10;
+    box-shadow: var(--shadow);
+  }
+}
+
+@media (max-width: 880px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}

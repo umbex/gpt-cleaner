@@ -6,7 +6,7 @@ import uuid
 from pathlib import Path
 from typing import Any, Dict, List
 
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -250,6 +250,15 @@ def create_app(base_dir: Path | None = None) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    @app.middleware("http")
+    async def disable_frontend_cache(request: Request, call_next):
+        response = await call_next(request)
+        if request.url.path == "/" or request.url.path.startswith("/static/"):
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+        return response
 
     static_dir = settings.root_dir / "static"
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
@@ -697,6 +706,13 @@ def create_app(base_dir: Path | None = None) -> FastAPI:
             size=stat.st_size,
             updated_at=stat.st_mtime,
         )
+
+    @app.get("/api/rules/files/{file_id:path}/download")
+    def download_rule_file(file_id: str) -> FileResponse:
+        destination = _resolve_file_id(settings.rules_dir, file_id)
+        if not destination.exists() or not destination.is_file():
+            raise HTTPException(status_code=404, detail="File not found")
+        return FileResponse(path=str(destination), filename=destination.name)
 
     @app.put("/api/rules/files/{file_id:path}", response_model=RulesFileListItem)
     def overwrite_rule_file(file_id: str, payload: RulesFileContentUpdate) -> RulesFileListItem:

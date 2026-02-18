@@ -17,6 +17,8 @@ const elements = {
   messageInput: document.getElementById("messageInput"),
   fileInput: document.getElementById("fileInput"),
   responseModeSelect: document.getElementById("responseModeSelect"),
+  sendProgress: document.getElementById("sendProgress"),
+  sendProgressBar: document.getElementById("sendProgressBar"),
   attachmentInfo: document.getElementById("attachmentInfo"),
   statusBadge: document.getElementById("statusBadge"),
   themeToggleBtn: document.getElementById("themeToggleBtn"),
@@ -30,6 +32,41 @@ const elements = {
   rulesValidationInfo: document.getElementById("rulesValidationInfo"),
   loggingToggle: document.getElementById("loggingToggle"),
 };
+
+let sendProgressTimer = null;
+
+function resetSendProgressBar() {
+  if (sendProgressTimer) {
+    clearInterval(sendProgressTimer);
+    sendProgressTimer = null;
+  }
+  elements.sendProgress.classList.remove("active");
+  elements.sendProgressBar.style.width = "0%";
+}
+
+function startSendProgressBar() {
+  if (sendProgressTimer) {
+    clearInterval(sendProgressTimer);
+  }
+  let progress = 8;
+  elements.sendProgress.classList.add("active");
+  elements.sendProgressBar.style.width = `${progress}%`;
+  sendProgressTimer = setInterval(() => {
+    progress = Math.min(progress + Math.random() * 12, 90);
+    elements.sendProgressBar.style.width = `${progress}%`;
+  }, 140);
+}
+
+function completeSendProgressBar() {
+  if (sendProgressTimer) {
+    clearInterval(sendProgressTimer);
+    sendProgressTimer = null;
+  }
+  elements.sendProgressBar.style.width = "100%";
+  setTimeout(() => {
+    resetSendProgressBar();
+  }, 180);
+}
 
 async function api(path, options = {}) {
   const response = await fetch(path, {
@@ -261,6 +298,8 @@ async function sendMessage() {
 
   elements.messageInput.value = "";
   setStatus("Sending...");
+  elements.sendBtn.disabled = true;
+  startSendProgressBar();
 
   try {
     let responseMode = elements.responseModeSelect.value;
@@ -312,6 +351,9 @@ async function sendMessage() {
   } catch (error) {
     setStatus(`Error: ${error.message}`);
     renderMessage("assistant", `Error: ${error.message}`, "SYSTEM");
+  } finally {
+    elements.sendBtn.disabled = false;
+    completeSendProgressBar();
   }
 }
 
@@ -325,9 +367,12 @@ async function loadRulesFiles() {
 
     const main = document.createElement("div");
     main.className = "rules-file-main";
-    const name = document.createElement("div");
+    const name = document.createElement("a");
     name.className = "rules-file-name";
     name.textContent = file.name;
+    name.href = `/api/rules/files/${encodeURIComponent(file.file_id)}/download`;
+    name.target = "_blank";
+    name.rel = "noopener noreferrer";
     const size = document.createElement("div");
     size.className = "rules-file-size";
     size.textContent = `${file.size} bytes`;

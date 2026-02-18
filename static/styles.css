@@ -10,6 +10,9 @@
   --warn: #b46800;
   --danger: #c93030;
   --shadow: 0 12px 30px rgba(20, 32, 48, 0.1);
+  --scrollbar-track: color-mix(in srgb, var(--bg) 85%, var(--bg-2));
+  --scrollbar-thumb: color-mix(in srgb, var(--muted) 35%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--muted) 55%, transparent);
 }
 
 body.theme-dark {
@@ -24,6 +27,9 @@ body.theme-dark {
   --warn: #f2a43e;
   --danger: #ff6d6d;
   --shadow: 0 18px 36px rgba(0, 0, 0, 0.35);
+  --scrollbar-track: color-mix(in srgb, var(--bg) 78%, var(--bg-2));
+  --scrollbar-thumb: color-mix(in srgb, #b8c4d6 30%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, #b8c4d6 50%, transparent);
 }
 
 * {
@@ -33,16 +39,18 @@ body.theme-dark {
 html,
 body {
   margin: 0;
-  min-height: 100%;
+  height: 100%;
   background: radial-gradient(circle at top left, #d6e4ff 0%, var(--bg) 35%, var(--bg) 100%);
   color: var(--text);
   font-family: "Segoe UI", "SF Pro Display", "Helvetica Neue", sans-serif;
+  overflow: hidden;
 }
 
 .app-shell {
   display: grid;
   grid-template-columns: 270px 1fr 340px;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar,
@@ -111,7 +119,9 @@ body {
 
 .main-panel {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .topbar {
@@ -148,10 +158,46 @@ input[type="text"] {
 }
 
 .chat-view {
-  overflow: auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
   display: grid;
   gap: 12px;
+}
+
+.chat-view,
+textarea,
+.rules-panel {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.chat-view::-webkit-scrollbar,
+textarea::-webkit-scrollbar,
+.rules-panel::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.chat-view::-webkit-scrollbar-track,
+textarea::-webkit-scrollbar-track,
+.rules-panel::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 999px;
+}
+
+.chat-view::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb,
+.rules-panel::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+}
+
+.chat-view::-webkit-scrollbar-thumb:hover,
+textarea::-webkit-scrollbar-thumb:hover,
+.rules-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
 }
 
 .msg {
@@ -194,10 +240,34 @@ input[type="text"] {
   padding: 14px 20px;
   display: grid;
   gap: 10px;
+  position: relative;
+}
+
+.send-progress {
+  height: 3px;
+  width: 100%;
+  background: color-mix(in srgb, var(--line) 65%, transparent);
+  border-radius: 999px;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.send-progress.active {
+  opacity: 1;
+}
+
+.send-progress-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width 0.15s linear;
 }
 
 textarea {
   min-height: 84px;
+  max-height: 220px;
+  overflow-y: auto;
   resize: vertical;
 }
 
@@ -348,10 +418,17 @@ textarea {
 }
 
 .rules-file-name {
+  display: inline-block;
   font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.rules-file-name:hover {
+  text-decoration: underline;
 }
 
 .rules-file-size {

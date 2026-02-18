@@ -172,6 +172,11 @@ def test_rule_file_management_and_reload(client):
     assert upload.status_code == 200
     file_id = upload.json()["file_id"]
 
+    downloaded = client.get(f"/api/rules/files/{file_id}/download")
+    assert downloaded.status_code == 200
+    assert "attachment" in (downloaded.headers.get("content-disposition", "").lower())
+    assert "New Client" in downloaded.text
+
     validate = client.post("/api/rulesets/validate")
     assert validate.status_code == 200
     assert validate.json()["ok"] is True

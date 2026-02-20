@@ -9,7 +9,7 @@ services:
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
-      LOGGING_ENABLED: ${LOGGING_ENABLED:-true}
+      LOGGING_ENABLED: ${LOGGING_ENABLED:-false}
       AVAILABLE_MODELS: ${AVAILABLE_MODELS:-gpt-4o-mini,gpt-5.2,gpt-5.3}
       DEFAULT_MODEL: ${DEFAULT_MODEL:-gpt-4o-mini}
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-20}

@@ -45,7 +45,7 @@ def _resolve_file_id(rules_dir: Path, file_id: str) -> Path:
 
 def _to_message_response(row: Dict[str, Any]) -> MessageResponse:
     metadata = Database.from_json(row.get("metadata_json"), {})
-    display_content = row["sanitized_content"] if row.get("role") == "user" else row["content"]
+    display_content = row["content"]
     return MessageResponse(
         id=row["id"],
         role=row["role"],
@@ -89,6 +89,8 @@ _FORCED_OUTPUT_EXTENSIONS = {
     "docx": ".docx",
     "xlsx": ".xlsx",
 }
+
+_TOKEN_PLACEHOLDER_PATTERN = re.compile(r"<TKN_[A-Z0-9_]+_[0-9]{3}>")
 
 
 def _resolve_output_extension(response_mode: str, source_filename: str) -> tuple[str | None, str | None]:
@@ -446,6 +448,8 @@ def create_app(base_dir: Path | None = None) -> FastAPI:
             "rules_triggered": sanitized.rules_triggered,
             "file_ids": request.file_ids,
             "tokens_created": sanitized.tokens_created,
+            "encoded_values": sanitized.encoded_values,
+            "encoded_count": len(sanitized.encoded_values),
         }
         db.execute(
             """
@@ -472,6 +476,16 @@ def create_app(base_dir: Path | None = None) -> FastAPI:
             {"role": row["role"], "content": row["sanitized_content"]}
             for row in history_rows
         ]
+        if _TOKEN_PLACEHOLDER_PATTERN.search(sanitized.sanitized_text):
+            provider_messages.append(
+                {
+                    "role": "system",
+                    "content": (
+                        "Important token handling: placeholders in the form <TKN_...> must be preserved "
+                        "exactly as provided. Do not alter, translate, split, reformat, remove, or invent tokens."
+                    ),
+                }
+            )
         if output_extension:
             provider_messages.append(
                 {"role": "system", "content": _build_output_format_instruction(output_extension)}
@@ -481,7 +495,7 @@ def create_app(base_dir: Path | None = None) -> FastAPI:
             llm_raw_response, usage = llm_gateway.chat(provider_messages, model)
         except LLMGatewayError as exc:
             raise _map_llm_error(exc, model) from exc
-        assistant_content, tokens_reconciled, missing_tokens = rule_engine.reconcile(
+        assistant_content, tokens_reconciled, missing_tokens, decoded_values = rule_engine.reconcile(
             session_id, llm_raw_response
         )
 
@@ -534,6 +548,8 @@ def create_app(base_dir: Path | None = None) -> FastAPI:
         assistant_metadata = {
             "reconciled": True,
             "tokens_reconciled": tokens_reconciled,
+            "decoded_values": decoded_values,
+            "decoded_count": len(decoded_values),
             "missing_tokens": missing_tokens,
             "provider_usage": usage,
             "mock_mode": llm_gateway.is_mock_mode,
@@ -595,7 +611,7 @@ def create_app(base_dir: Path | None = None) -> FastAPI:
         user_response = MessageResponse(
             id=user_message_id,
             role="user",
-            content=sanitized.sanitized_text,
+            content=original_user_text,
             created_at=user_created_at,
             model=model,
             metadata=user_metadata,
@@ -617,7 +633,11 @@ def create_app(base_dir: Path | None = None) -> FastAPI:
                 "rules_triggered": sanitized.rules_triggered,
                 "transformations": sanitized.transformations,
                 "tokens_created": sanitized.tokens_created,
+                "encoded_values": sanitized.encoded_values,
+                "encoded_count": len(sanitized.encoded_values),
                 "tokens_reconciled": tokens_reconciled,
+                "decoded_values": decoded_values,
+                "decoded_count": len(decoded_values),
                 "logging_enabled": settings.logging_enabled,
                 "response_mode": effective_response_mode,
             },

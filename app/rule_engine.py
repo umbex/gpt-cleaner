@@ -44,6 +44,7 @@ class SanitizationResult:
     rules_triggered: List[str]
     transformations: int
     tokens_created: int
+    encoded_values: List[str]
     original_hash: str
 
 
@@ -250,6 +251,7 @@ class RuleEngine:
                 rules_triggered=[],
                 transformations=0,
                 tokens_created=0,
+                encoded_values=[],
                 original_hash=original_hash,
             )
 
@@ -271,6 +273,7 @@ class RuleEngine:
                 rules_triggered=[],
                 transformations=0,
                 tokens_created=0,
+                encoded_values=[],
                 original_hash=original_hash,
             )
 
@@ -279,6 +282,8 @@ class RuleEngine:
         chunks: list[str] = []
         triggered: set[str] = set()
         tokens_created = 0
+        encoded_values: list[str] = []
+        encoded_seen: set[str] = set()
 
         for match in selected:
             chunks.append(original[cursor : match.start])
@@ -288,6 +293,11 @@ class RuleEngine:
             triggered.add(match.rule.id)
             if created:
                 tokens_created += 1
+            if match.rule.action.lower().strip() == "tokenize":
+                key = match.value.casefold()
+                if key not in encoded_seen:
+                    encoded_seen.add(key)
+                    encoded_values.append(match.value)
 
         chunks.append(original[cursor:])
         sanitized = "".join(chunks)
@@ -298,12 +308,13 @@ class RuleEngine:
             rules_triggered=sorted(triggered),
             transformations=len(selected),
             tokens_created=tokens_created,
+            encoded_values=encoded_values,
             original_hash=original_hash,
         )
 
-    def reconcile(self, session_id: str, text: str) -> Tuple[str, int, List[str]]:
+    def reconcile(self, session_id: str, text: str) -> Tuple[str, int, List[str], List[str]]:
         if not text:
-            return text, 0, []
+            return text, 0, [], []
 
         token_pattern = re.compile(r"<TKN_[A-Z0-9_]+_[0-9]{3}>")
         tokens = sorted(set(token_pattern.findall(text)), key=len, reverse=True)
@@ -311,6 +322,8 @@ class RuleEngine:
         reconciled = text
         replaced_count = 0
         missing: list[str] = []
+        decoded_values: list[str] = []
+        decoded_seen: set[str] = set()
 
         for token in tokens:
             category_match = re.match(r"<TKN_([A-Z0-9_]+)_([0-9]{3})>", token)
@@ -337,8 +350,12 @@ class RuleEngine:
                 continue
             reconciled = reconciled.replace(token, original_value)
             replaced_count += occurrences
+            value_key = original_value.casefold()
+            if value_key not in decoded_seen:
+                decoded_seen.add(value_key)
+                decoded_values.append(original_value)
 
-        return reconciled, replaced_count, missing
+        return reconciled, replaced_count, missing, decoded_values
 
     def _find_regex_matches(self, text: str, rule: RuleDefinition) -> List[_Candidate]:
         flags = 0 if rule.case_sensitive else re.IGNORECASE

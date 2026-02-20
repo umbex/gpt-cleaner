@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file.
 
 The format is inspired by Keep a Changelog and this project uses Semantic Versioning.
 
+## [0.2.3] - 2026-02-20
+
+### Added
+- Chat metadata now shows explicit encoded/decoded values in the message header when present.
+- Prompt guardrail for tokenized placeholders (`<TKN_...>`) to keep tokens intact in LLM output.
+
+### Changed
+- User messages are displayed as original text (not tokenized placeholders) in chat history.
+- Persistent logging default set to `false` (`app` config, compose default, `.env.example`).
+- Response mode default in UI set to `Same as input`.
+- Minor test fixture/data refresh under `test-files/` and `rules/lists/`.
+
 ## [0.2.2] - 2026-02-20
 
 ### Added

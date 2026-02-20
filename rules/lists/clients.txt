@@ -1,4 +1,7 @@
 # Test list: 100 Italian companies (internal rules dataset)
+Acme SPA
+AKQA
+WPP
 Enel
 Eni
 Poste Italiane

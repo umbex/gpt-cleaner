@@ -124,9 +124,47 @@ function buildMessageMeta(message, fallback = {}) {
   const model = message.model || fallback.model || "n/a";
   const time = new Date(message.created_at).toLocaleTimeString();
   const metadata = message.metadata || {};
-  const enc = toCount(metadata.tokens_created ?? fallback.tokens_created);
-  const dec = toCount(metadata.tokens_reconciled ?? fallback.tokens_reconciled);
-  return `${model} | ${time} | ENCODED ${enc} | DECODED ${dec}`;
+
+  const encodedValues = Array.isArray(metadata.encoded_values)
+    ? metadata.encoded_values
+    : Array.isArray(fallback.encoded_values)
+      ? fallback.encoded_values
+      : [];
+  const decodedValues = Array.isArray(metadata.decoded_values)
+    ? metadata.decoded_values
+    : Array.isArray(fallback.decoded_values)
+      ? fallback.decoded_values
+      : [];
+
+  const encodedCount =
+    encodedValues.length ||
+    toCount(
+      metadata.encoded_count ??
+        metadata.tokens_encoded ??
+        metadata.transformations ??
+        metadata.tokens_created ??
+        fallback.encoded_count ??
+        fallback.tokens_created
+    );
+  const decodedCount =
+    decodedValues.length ||
+    toCount(
+      metadata.decoded_count ??
+        metadata.tokens_reconciled ??
+        fallback.decoded_count ??
+        fallback.tokens_reconciled
+    );
+
+  const parts = [`${model}`, `${time}`];
+  if (message.role === "user" && encodedCount > 0) {
+    const encodedLabel = encodedValues.length ? encodedValues.join(", ") : "";
+    parts.push(`ENCODED (${encodedCount})${encodedLabel ? `: ${encodedLabel}` : ""}`);
+  }
+  if (message.role === "assistant" && decodedCount > 0) {
+    const decodedLabel = decodedValues.length ? decodedValues.join(", ") : "";
+    parts.push(`DECODED (${decodedCount})${decodedLabel ? `: ${decodedLabel}` : ""}`);
+  }
+  return parts.join(" | ");
 }
 
 function renderSessions() {
@@ -343,6 +381,8 @@ async function sendMessage() {
       "user",
       result.user_message.content,
       buildMessageMeta(result.user_message, {
+        encoded_count: (result.sanitization || {}).transformations,
+        encoded_values: (result.sanitization || {}).encoded_values,
         tokens_created: (result.sanitization || {}).tokens_created,
       })
     );
@@ -350,6 +390,7 @@ async function sendMessage() {
       "assistant",
       result.assistant_message.content,
       buildMessageMeta(result.assistant_message, {
+        decoded_values: (result.sanitization || {}).decoded_values,
         tokens_reconciled: (result.sanitization || {}).tokens_reconciled,
       }),
       "message-start"

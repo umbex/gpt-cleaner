@@ -27,7 +27,9 @@ def test_chat_upload_and_audit_flow(client):
     body = send.json()
 
     assert body["session_id"] == session["id"]
-    assert "<TKN_" in body["user_message"]["content"]
+    assert "<TKN_" not in body["user_message"]["content"]
+    assert "mario.rossi@example.com" in body["user_message"]["content"]
+    assert body["user_message"]["metadata"]["encoded_count"] >= 1
     assert body["assistant_message"]["role"] == "assistant"
     assert body["sanitization"]["transformations"] >= 1
     assert body["sanitization"]["logging_enabled"] is True

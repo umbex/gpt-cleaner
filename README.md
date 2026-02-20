@@ -110,7 +110,7 @@ Main variables:
 
 - `OPENAI_API_KEY`: enables real provider mode
 - `OPENAI_BASE_URL`: custom provider base URL (optional)
-- `LOGGING_ENABLED`: `true|false`
+- `LOGGING_ENABLED`: `true|false` (default: `false`)
 - `AVAILABLE_MODELS`: comma-separated model list
 - `DEFAULT_MODEL`: default selected model
 - `MAX_UPLOAD_MB`: max upload size

@@ -166,7 +166,7 @@ function renderSessions() {
   }
 }
 
-function renderMessage(role, content, meta = "") {
+function renderMessage(role, content, meta = "", scrollMode = "bottom") {
   const container = document.createElement("div");
   container.className = `msg ${role}`;
 
@@ -185,7 +185,12 @@ function renderMessage(role, content, meta = "") {
   container.appendChild(metaEl);
   container.appendChild(contentEl);
   elements.chatView.appendChild(container);
-  elements.chatView.scrollTop = elements.chatView.scrollHeight;
+  if (scrollMode === "message-start") {
+    // Show the beginning of long assistant messages instead of forcing bottom.
+    elements.chatView.scrollTop = Math.max(container.offsetTop - 8, 0);
+  } else {
+    elements.chatView.scrollTop = elements.chatView.scrollHeight;
+  }
 }
 
 function renderGeneratedFile(file) {
@@ -346,7 +351,8 @@ async function sendMessage() {
       result.assistant_message.content,
       buildMessageMeta(result.assistant_message, {
         tokens_reconciled: (result.sanitization || {}).tokens_reconciled,
-      })
+      }),
+      "message-start"
     );
     if (result.generated_file) {
       renderGeneratedFile(result.generated_file);

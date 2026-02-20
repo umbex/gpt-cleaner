@@ -208,6 +208,8 @@ textarea::-webkit-scrollbar-thumb:hover,
   box-shadow: var(--shadow);
   white-space: pre-wrap;
   line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .msg.user {
@@ -252,6 +254,16 @@ textarea::-webkit-scrollbar-thumb:hover,
   background: color-mix(in srgb, var(--bg) 82%, var(--line));
   border-radius: 6px;
   padding: 1px 5px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.msg pre {
+  margin: 0 0 8px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .composer {

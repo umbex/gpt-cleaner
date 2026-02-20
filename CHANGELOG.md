@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file.
 
 The format is inspired by Keep a Changelog and this project uses Semantic Versioning.
 
+## [0.2.2] - 2026-02-20
+
+### Added
+- Assistant/user message header now shows `ENCODED` and `DECODED` counters in full.
+- Assistant messages now render sanitized Markdown (e.g. `**bold**` shown as formatted text).
+
+### Changed
+- New assistant messages auto-scroll to the start of the message instead of the end.
+- Improved soft-wrapping for long technical/plain-text payloads (including RTF-like content) in chat bubbles.
+
 ## [0.2.1] - 2026-02-20
 
 ### Added

@@ -115,9 +115,18 @@ function updateThemeButton(currentTheme) {
   elements.themeToggleBtn.title = nextModeLabelEn;
 }
 
-function formatDate(iso) {
-  const date = new Date(iso);
-  return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+function toCount(value) {
+  const parsed = Number.parseInt(String(value ?? "0"), 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function buildMessageMeta(message, fallback = {}) {
+  const model = message.model || fallback.model || "n/a";
+  const time = new Date(message.created_at).toLocaleTimeString();
+  const metadata = message.metadata || {};
+  const enc = toCount(metadata.tokens_created ?? fallback.tokens_created);
+  const dec = toCount(metadata.tokens_reconciled ?? fallback.tokens_reconciled);
+  return `${model} | ${time} | ENCODED ${enc} | DECODED ${dec}`;
 }
 
 function renderSessions() {
@@ -166,7 +175,12 @@ function renderMessage(role, content, meta = "") {
   metaEl.textContent = meta;
 
   const contentEl = document.createElement("div");
-  contentEl.textContent = content;
+  if (role === "assistant" && window.marked && window.DOMPurify) {
+    const html = window.marked.parse(content || "");
+    contentEl.innerHTML = window.DOMPurify.sanitize(html);
+  } else {
+    contentEl.textContent = content;
+  }
 
   container.appendChild(metaEl);
   container.appendChild(contentEl);
@@ -180,7 +194,7 @@ function renderGeneratedFile(file) {
 
   const metaEl = document.createElement("div");
   metaEl.className = "msg-meta";
-  metaEl.textContent = "ASSISTANT | file output";
+  metaEl.textContent = "file output";
 
   const link = document.createElement("a");
   link.className = "generated-file-link";
@@ -273,8 +287,7 @@ async function loadMessages() {
   const messages = await api(`/api/chat/sessions/${state.currentSessionId}/messages`);
   elements.chatView.innerHTML = "";
   for (const msg of messages) {
-    const model = msg.model ? ` | ${msg.model}` : "";
-    renderMessage(msg.role, msg.content, `${msg.role.toUpperCase()}${model} | ${formatDate(msg.created_at)}`);
+    renderMessage(msg.role, msg.content, buildMessageMeta(msg));
   }
 }
 
@@ -324,12 +337,16 @@ async function sendMessage() {
     renderMessage(
       "user",
       result.user_message.content,
-      `USER | ${result.user_message.model} | ${new Date(result.user_message.created_at).toLocaleTimeString()}`
+      buildMessageMeta(result.user_message, {
+        tokens_created: (result.sanitization || {}).tokens_created,
+      })
     );
     renderMessage(
       "assistant",
       result.assistant_message.content,
-      `ASSISTANT | ${result.assistant_message.model} | ${new Date(result.assistant_message.created_at).toLocaleTimeString()}`
+      buildMessageMeta(result.assistant_message, {
+        tokens_reconciled: (result.sanitization || {}).tokens_reconciled,
+      })
     );
     if (result.generated_file) {
       renderGeneratedFile(result.generated_file);

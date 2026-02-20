@@ -22,11 +22,14 @@ The goal is to prevent sensitive data leakage while keeping a ChatGPT-like user 
 - Deterministic tokenization with encrypted token mapping per session
 - Controlled response reconciliation by category policy
 - Rules file manager from UI (list/upload/overwrite/delete/reload)
+- Rules list file download by clicking filename
 - Response modes:
   - `In chat`
   - `Same as input`
   - `Force .txt`, `Force .md`, `Force .docx`, `Force .xlsx`, `Force .csv`
 - Generated output file download (`/api/files/{file_id}/download`)
+- Assistant messages rendered as sanitized Markdown (bold/lists/code)
+- Message meta header with model, time, and sanitization counters (`ENCODED`, `DECODED`)
 
 Note: PDF output is not supported. For `Same as input` with PDF input, fallback is `.txt`.
 
@@ -136,6 +139,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
    - `Force ...`: force output format
 4. Send.
 5. If a file was generated, a `Download file` link appears in the assistant message area.
+6. Message headers show model/time plus `ENCODED` (tokens masked) and `DECODED` (tokens reconciled).
 
 Note: file-output modes require at least one attachment. Without attachment, backend falls back to `In chat`.
 

@@ -235,6 +235,25 @@ textarea::-webkit-scrollbar-thumb:hover,
   margin-bottom: 6px;
 }
 
+.msg p {
+  margin: 0 0 8px;
+}
+
+.msg p:last-child {
+  margin-bottom: 0;
+}
+
+.msg ul,
+.msg ol {
+  margin: 0 0 8px 20px;
+}
+
+.msg code {
+  background: color-mix(in srgb, var(--bg) 82%, var(--line));
+  border-radius: 6px;
+  padding: 1px 5px;
+}
+
 .composer {
   border-top: 1px solid var(--line);
   padding: 14px 20px;

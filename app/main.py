@@ -445,6 +445,7 @@ def create_app(base_dir: Path | None = None) -> FastAPI:
             "sanitized": True,
             "rules_triggered": sanitized.rules_triggered,
             "file_ids": request.file_ids,
+            "tokens_created": sanitized.tokens_created,
         }
         db.execute(
             """

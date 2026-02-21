@@ -13,7 +13,7 @@ The goal is to prevent sensitive data leakage while keeping a ChatGPT-like user 
 ## Core Features
 
 - Modern chat UI with multi-session support and Light/Dark theme
-- Model selector (default: `gpt-4o-mini`, `gpt-5.2`, `gpt-5.3`)
+- Model selector (default: `gpt-4o-mini`, `gpt-4.1-mini`, `gpt-4.1`, `gpt-5-mini`, `gpt-5`, `gpt-5.2`)
 - File upload support: `.txt`, `.md`, `.docx`, `.pdf`, `.xlsx`, `.csv`
 - Rule engine with:
   - regex rules

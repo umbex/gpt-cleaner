@@ -173,8 +173,12 @@ def _map_llm_error(exc: LLMGatewayError, model: str) -> HTTPException:
 
 
 def _ensure_default_rules(settings: Settings) -> None:
+    clients_path = settings.rules_dir / "lists" / "clients.txt"
+    if settings.ruleset_file.exists() and clients_path.exists():
+        return
+
     settings.rules_dir.mkdir(parents=True, exist_ok=True)
-    (settings.rules_dir / "lists").mkdir(parents=True, exist_ok=True)
+    clients_path.parent.mkdir(parents=True, exist_ok=True)
 
     if not settings.ruleset_file.exists():
         default_rules = {
@@ -224,7 +228,6 @@ def _ensure_default_rules(settings: Settings) -> None:
         except Exception:
             settings.ruleset_file.write_text(json.dumps(default_rules, indent=2), encoding="utf-8")
 
-    clients_path = settings.rules_dir / "lists" / "clients.txt"
     if not clients_path.exists():
         clients_path.write_text("ACME S.p.A.\nUmbex SRL\nDemo Client\n", encoding="utf-8")
 

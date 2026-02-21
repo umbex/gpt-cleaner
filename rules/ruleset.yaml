@@ -24,17 +24,23 @@ rules:
     priority: 130
 lists:
   - id: clients
-    source: lists/clients.txt
+    source: lists/clients_sample.txt
     category: BUSINESS
     action: tokenize
     priority: 95
   - id: brands
-    source: lists/brands.txt
+    source: lists/brands_sample.txt
     category: BRAND
     action: tokenize
     priority: 90
   - id: employees
-    source: lists/employees.txt
+    source: lists/employees_sample.txt
+    category: NAMES
+    action: tokenize
+    priority: 100
+    include_reversed_word_order: true
+  - id: mynames
+    source: lists/mynames.txt
     category: NAMES
     action: tokenize
     priority: 100

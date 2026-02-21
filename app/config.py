@@ -27,6 +27,10 @@ def _as_list(value: str | None, default: List[str]) -> List[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
 
 
+def _is_vercel_runtime() -> bool:
+    return os.getenv("VERCEL") == "1" or bool(os.getenv("VERCEL_ENV"))
+
+
 @dataclass(slots=True)
 class Settings:
     root_dir: Path
@@ -48,7 +52,8 @@ class Settings:
 
 def load_settings(base_dir: Path | None = None) -> Settings:
     root = base_dir or Path.cwd()
-    data_dir = Path(os.getenv("DATA_DIR", str(root / "data")))
+    default_data_dir = Path("/tmp/gpt-cleaner-data") if _is_vercel_runtime() else (root / "data")
+    data_dir = Path(os.getenv("DATA_DIR", str(default_data_dir)))
     rules_dir = Path(os.getenv("RULES_DIR", str(root / "rules")))
     uploads_dir = Path(os.getenv("UPLOADS_DIR", str(data_dir / "uploads")))
     db_path = Path(os.getenv("DB_PATH", str(data_dir / "app.db")))

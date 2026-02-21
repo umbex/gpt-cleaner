@@ -1,0 +1,102 @@
+# Test list: 100 Italian companies (internal rules dataset)
+Acme SPA
+Enel
+Eni
+Poste Italiane
+Leonardo
+Intesa Sanpaolo
+UniCredit
+Assicurazioni Generali
+Snam
+Terna
+Italgas
+A2A
+Hera
+Iren
+Acea
+Prysmian
+Pirelli
+Stellantis
+Ferrari
+Iveco Group
+CNH Industrial
+Saipem
+Maire
+Fincantieri
+Webuild
+ASTM
+Mundys
+Ferrovie dello Stato Italiane
+Trenitalia
+Italo - Nuovo Trasporto Viaggiatori
+Banca Mediolanum
+Mediobanca
+Banco BPM
+BPER Banca
+FinecoBank
+Banca Monte dei Paschi di Siena
+Banca Popolare di Sondrio
+Credem
+Nexi
+Amplifon
+Recordati
+DiaSorin
+Chiesi Farmaceutici
+Menarini
+Bracco
+Angelini Pharma
+De Longhi
+Technogym
+Campari Group
+Lavazza
+Illycaffe
+Barilla
+Ferrero
+Lactalis Italia
+Granarolo
+Mutti
+Perfetti Van Melle Italia
+Luxottica
+Moncler
+Prada
+Brunello Cucinelli
+Tod's
+Salvatore Ferragamo
+Giorgio Armani
+Dolce & Gabbana
+OTB Group
+Max Mara Fashion Group
+Oniverse
+Benetton Group
+Miroglio
+Geox
+Safilo
+Piaggio
+Brembo
+Magneti Marelli
+Dallara
+Beretta Holding
+Danieli
+Marcegaglia
+Riva Group
+Acciaierie d'Italia
+Edison
+ERG
+Saras
+Alerion Clean Power
+Sorgenia
+Alpitour World
+Costa Crociere
+Grimaldi Group
+MSC Crociere
+Bulgari
+Bialetti Industrie
+RCS MediaGroup
+MFE-MediaForEurope
+Rai Way
+TIM
+Fastweb
+Wind Tre
+Engineering Ingegneria Informatica
+Reply
+STMicroelectronics
